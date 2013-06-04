@@ -9,6 +9,6 @@
       "async": "0.2.7",
       "express": "3.2.0",
       "request": "2.9.100",
-      "socket.io": "latest"
+      "mongoose": "3.6.11"
   }
 }
