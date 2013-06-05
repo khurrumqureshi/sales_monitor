@@ -11,7 +11,7 @@ module.exports = function(db,app,passport){
         app.use(express.methodOverride());
         app.use(express.cookieParser());
         app.use(express.session({
-            store:new mongoStore({mongoose_connection: db}),
+            store:new mongoStore({url: config.connectionString}),
             secret: 'secret'
         }));
         app.use(express.bodyParser());

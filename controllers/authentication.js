@@ -1,14 +1,29 @@
-var passport = require('passport');
+var passport = require('passport'),
+    customError = require('../lib/custom_errors'),
+    salesRepModel = require('../model/salesRep');
 
 exports.setup = function(app) {
     app.get('/',title);
     app.get('/login',login);
     app.get('/logout', logout)
-    app.post('/login',passport.authenticate('local', { failureRedirect: '/login' }), authenticate);
+    app.post('/login', authenticate);
 }
 
 function authenticate(req, res, next){
-    res.redirect('/');
+    passport.authenticate('local', function(err, user, info) {
+        if (err) { return next(err) }
+        if (!user) {
+            return next(new customError.InvalidCredentials("Failed to verify credentials"));
+        }
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+
+            salesRepModel.getSalesRep(user._id.toString(),function(err, salesRep){
+                return res.send(salesRep);
+            })
+
+        });
+    })(req, res, next);
 };
 
 function title(req, res, next){
