@@ -9,7 +9,10 @@ var businessUnit = new Schema({
     description: String,
     products: [{
         productName: String,
-        price: Number
+        theraputicClass: String,
+        indication: String,
+        price: Number,
+        packShot: String
     }]
 });
 
