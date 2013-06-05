@@ -1,13 +1,13 @@
 var mongoose = require('mongoose'),
     ObjectId = require('mongoose').Types.ObjectId,
     Schema = mongoose.Schema,
-    customError = require('../lib/custom_errors');
+    customError = require('../lib/custom_errors'),
+    utils = require('../lib/util');
 
 var businessUnit = new Schema({
     name: String,
     description: String,
     products: [{
-        productId:Schema.types.ObjectId,
         productName: String,
         price: Number
     }]
@@ -16,16 +16,11 @@ var businessUnit = new Schema({
 var businessUnitModel = mongoose.model('BusinessUnit', businessUnit);
 
 module.exports.addBusinessUnit = function(data, callback){
-    var businessUnit = new businessUnitModel({name:data.name,description:data.description});
-    for(var key in data.products){
-        businessUnit.products.push({
-            productId:new ObjectId(),
-            productName: data.products[key].productName,
-            price: data.products[key].price
-        })
-    }
-
-    businessUnit.save(function(err){
+    new businessUnitModel({
+        name:data.name,
+        description:data.description,
+        products:data.products
+    }).save(function(err){
         if(err)
             return callback(new customError.Database("Failed to save record."),null);
 

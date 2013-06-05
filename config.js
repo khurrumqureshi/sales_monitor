@@ -17,6 +17,7 @@ module.exports.dbOptions = {
     }
 };
 
-module.exports.connectionString = 'mongodb://localhost:27017/Sales'
+module.exports.connectionString = 'mongodb://admin:admin123@widmore.mongohq.com:10010/Sales'
+//module.exports.connectionString = 'mongodb://localhost:27017/Sales'
 
 module.exports.projectDirectory = __dirname;

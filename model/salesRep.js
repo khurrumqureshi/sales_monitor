@@ -10,9 +10,9 @@ var salesRepSchema = new Schema({
     area: String,
     email: String,
     password: String,
-    businessUnitId : {type:Schema.types.ObjectId, ref:'BusinessUnit'},
-    bricks: [{type:Schema.types.ObjectId, ref:'Brick'}],
-    doctors: [{type:Schema.types.ObjectId, ref:'Doctor'}]
+    businessUnitId : {type:Schema.Types.ObjectId, ref:'BusinessUnit'},
+    bricks: [{type:Schema.Types.ObjectId, ref:'Brick'}],
+    doctors: [{type:Schema.Types.ObjectId, ref:'Doctor'}]
 });
 
 var salesRepModel = mongoose.model('SalesRep', salesRepSchema);
@@ -65,4 +65,16 @@ module.exports.getSalesReps = function(query, callback){
 
             callback(null, salesReps)
         })
+}
+
+module.exports.verifyCredentials = function(query,callback){
+    salesRepModel.findOne(query,function(err,salesRep){
+        if (err)
+            return callback(new customError.Database("Failed to get record."),null);
+
+        if(salesRep==null)
+            callback(new customError.InvalidCredentials("Failed to verify credentials"),null);
+        else
+            callback(null, salesRep)
+    })
 }

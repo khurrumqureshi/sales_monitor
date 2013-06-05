@@ -1,7 +1,8 @@
 var express = require('express'),
     config = require('./config'),
     http = require('http'),
-    db = require('./model/db');
+    db = require('./model/db'),
+    passport = require('passport');
 
 
 /**
@@ -15,11 +16,16 @@ process.on('uncaughtException', function (err) {
 
 var app = express();
 
-db.connectDb(function(){
+db.connectDb(function(db){
+
+    /**
+     * Passport.js intiallization
+     */
+    require('./configrations/passport-config')(passport);
     /**
      * Express Configuration
      */
-    require('./configrations/express-config')(app,express);
+    require('./configrations/express-config')(db,app,passport);
 
     /**
      * Start http server here

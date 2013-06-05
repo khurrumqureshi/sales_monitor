@@ -23,8 +23,7 @@ function getBusinessUnitList(req, res, next) {
  * POST /api/businessUnit
  */
 function insertBusinessUnit(req, res, next) {
-    var data = req.params('businessUnit',null);
-
+    var data = req.param('business_unit',null);
     if(data!=null){
         businessUnitModel.addBusinessUnit(data,function(err,result){
             if(err)
