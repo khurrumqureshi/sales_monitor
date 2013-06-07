@@ -2,9 +2,7 @@ var salesRepModel = require('../model/salesRep'),
     config = require('../config'),
     customError = require('../lib/custom_errors'),
     async = require('async'),
-    brickModel = require('../model/brick'),
-    budgetModel = require('../model/budget'),
-    salesModel = require('../model/sales');
+    brickModel = require('../model/brick');
 
 exports.setup = function(app) {
     app.get('/api/salesRep', getSalesRepList);
@@ -33,73 +31,9 @@ function getSalesRep(req, res, next) {
         if(err)
             return next(err);
 
-        var cloneSalesRep =  salesReps.toObject();
-        var now = new Date();
-        var startDate = new Date(now.getFullYear(),now.getMonth(),1);
-
-        async.parallel([
-            function(callback){
-                var products = [];
-                for(var key in cloneSalesRep.businessUnitId.products)
-                    products.push(cloneSalesRep.businessUnitId.products[key]._id);
-
-                salesModel.getSalesByProducts(products,startDate.getTime(),now.getTime(),function(err,productSales){
-                    if(err)
-                    callback();
-                    else{
-                        for(var key in cloneSalesRep.businessUnitId.products){
-                            var product = cloneSalesRep.businessUnitId.products[key];
-                            for(var salesKey in productSales){
-                                if(productSales[salesKey]._id.toString()==product._id.toString()){
-                                    product["salesUnit"] = productSales[salesKey].salesUnit;
-                                    break;
-                                }
-                            }
-                        }
-                        callback();
-                    }
-                })
-            },
-            function(callback){
-                async.forEach(cloneSalesRep.businessUnitId.products,function(product,cb){
-                    budgetModel.getBudget({productId:product._id,month:(now.getMonth()+1),year:now.getFullYear()},function(err,budget){
-                        if(err || budget==null)
-                            cb();
-                        else{
-                            product["budgetUnits"] = budget.units;
-                            cb();
-                        }
-                    })
-                },function(err){
-                    callback();
-                })
-            },
-            function(callback){
-                var bricks = [];
-                for(var key in cloneSalesRep.bricks)
-                    bricks.push(cloneSalesRep.bricks[key]._id);
-
-                salesModel.getSalesByBricks(bricks,startDate.getTime(),now.getTime(),function(err,brickSales){
-                    if(err)
-                        callback();
-                    else{
-                        for(var key in cloneSalesRep.bricks){
-                            var brick = cloneSalesRep.bricks[key];
-                            for(var salesKey in brickSales){
-                                if(brickSales[salesKey]._id.toString()==brick._id.toString()){
-                                    brick["salesUnit"] = brickSales[salesKey].salesUnit;
-                                    break;
-                                }
-                            }
-                        }
-                        callback();
-                    }
-                })
-            }
-        ],
-            function(err, results){
-                res.send(cloneSalesRep);
-            });
+        salesRepModel.incorporateSalesData(salesReps,function(newSalesRep){
+            res.send(newSalesRep);
+        })
     })
 }
 
@@ -147,3 +81,4 @@ function updateSalesRepBricks(req, res, next) {
     else
         next(new customError.MissingParameter("Required parameter missing"));
 }
+

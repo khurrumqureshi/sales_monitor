@@ -19,7 +19,9 @@ function authenticate(req, res, next){
             if (err) { return next(err); }
 
             salesRepModel.getSalesRep(user._id.toString(),function(err, salesRep){
-                return res.send(salesRep);
+                salesRepModel.incorporateSalesData(salesRep,function(newSalesRep){
+                    return res.send(newSalesRep);
+                })
             })
 
         });

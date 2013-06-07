@@ -55,8 +55,13 @@ module.exports.getSalesByBricks = function(bricks,startPeriod,endperiod,callback
         {
             $match: { brickId: {$in: bricks}, updatedDate:{$gte:startPeriod,$lt:endperiod}}
         },
-        { $group: { _id: '$brickId', salesUnit: { $sum: '$unitsSold' }}},
-        { $project: { _id: 1, salesUnit: 1 }},
+        { $group: { _id: {brickId:'$brickId', productId:'$productId'}, salesUnit: { $sum: '$unitsSold' }}},
+        { $project: {
+            _id: 0,
+            brickId:'$_id.brickId',
+            productId:'$_id.productId',
+            salesUnit: '$salesUnit'
+        }},
         function (err, brickSales){
             if(err)
                 callback(err, null);
