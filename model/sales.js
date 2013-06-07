@@ -9,7 +9,10 @@ var sales = new Schema({
     brickId: Schema.Types.ObjectId,
     chemistId: Schema.Types.ObjectId,
     unitsSold: Number,
-    updatedDate: Number
+    unitsValue: Number,
+    updatedDate: Number,
+    month: Number,
+    year: Number
 });
 
 var salesModel = mongoose.model('Sales', sales);
@@ -55,12 +58,13 @@ module.exports.getSalesByBricks = function(bricks,startPeriod,endperiod,callback
         {
             $match: { brickId: {$in: bricks}, updatedDate:{$gte:startPeriod,$lt:endperiod}}
         },
-        { $group: { _id: {brickId:'$brickId', productId:'$productId'}, salesUnit: { $sum: '$unitsSold' }}},
+        { $group: { _id: {brickId:'$brickId', productId:'$productId'}, salesUnit: { $sum: '$unitsSold' }, salesValue:{ $sum:'$unitsValue'}}},
         { $project: {
             _id: 0,
             brickId:'$_id.brickId',
             productId:'$_id.productId',
-            salesUnit: '$salesUnit'
+            salesUnit: '$salesUnit',
+            salesValue: '$salesValue'
         }},
         function (err, brickSales){
             if(err)
@@ -70,3 +74,23 @@ module.exports.getSalesByBricks = function(bricks,startPeriod,endperiod,callback
         })
 }
 
+module.exports.getSalesTrends = function(bricks,startPeriod,endperiod,callback){
+    salesModel.aggregate(
+        {
+            $match: { brickId: {$in: bricks}, updatedDate:{$gte:startPeriod,$lt:endperiod}}
+        },
+        { $group: { _id: {year:'$year',month:'$month'}, salesUnit: { $sum: '$unitsSold' }, salesValue:{ $sum:'$unitsValue'}}},
+        { $project: {
+            _id: 0,
+            year:'$_id.year',
+            month:'$_id.month',
+            salesUnit: '$salesUnit',
+            salesValue: '$salesValue'
+        }},
+        function (err, sales){
+            if(err)
+                callback(err, null);
+            else
+                callback(null,sales);
+        })
+}

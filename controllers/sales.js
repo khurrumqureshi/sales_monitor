@@ -48,6 +48,7 @@ module.exports.generateSales = function(callback){
 
         var cloneSalesRep =  salesReps.toObject();
         var now = new Date();
+        var startDate = new Date(now.getFullYear(),now.getMonth()-2,10);
         async.forEachSeries(cloneSalesRep.businessUnitId.products,function(product,cb){
             async.forEachSeries(cloneSalesRep.bricks,function(brick,brickCb){
                 chemistModel.getChemists({brickId:brick._id},function(err,chemists){
@@ -55,12 +56,16 @@ module.exports.generateSales = function(callback){
                         brickCb();
                     else{
                         async.forEach(chemists,function(chemist,chemistCb){
+                            var units = utils.getRandomInt(10,100);
                             var data = {
                                 productId: product._id.toString(),
                                 brickId: brick._id.toString(),
                                 chemistId: chemist._id.toString(),
-                                unitsSold: utils.getRandomInt(10,100),
-                                updatedDate: now.getTime()
+                                unitsSold: units,
+                                unitsValue: units*product.price,
+                                updatedDate: startDate.getTime(),
+                                month: startDate.getMonth()+1,
+                                year: startDate.getFullYear()
                             };
                             console.log(data);
                             salesModel.addSales(data,function(err,result){

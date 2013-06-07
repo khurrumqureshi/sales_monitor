@@ -142,7 +142,8 @@ module.exports.incorporateSalesData = function(salesReps, rootCallback){
                                     temp.push({
                                         productName:product.productName,
                                         price:product.price,
-                                        salesUnit:brickSales[salesKey].salesUnit
+                                        salesUnit:brickSales[salesKey].salesUnit,
+                                        salesValue: brickSales[salesKey].salesValue
                                     });
                                 }
                             }
