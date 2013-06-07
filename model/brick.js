@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 
 var brick = new Schema({
     name: String,
-    distributorId: Schema.Types.ObjectId,
+    distributorId: {type:Schema.Types.ObjectId, ref:'Distributors'},
     location: {lat: Number, long: Number}
 });
 
@@ -23,12 +23,15 @@ module.exports.addBrick = function(data, callback){
 }
 
 module.exports.getBricks = function(query, callback){
-    brickModel.find(query,function(err, bricks){
-        if (err)
-            return callback(new customError.Database("Failed to get records."),null);
+    brickModel
+        .find(query)
+        .populate('distributorId')
+        .exec(function (err, bricks) {
+            if (err)
+                return callback(new customError.Database("Failed to get records."),null);
 
-        callback(null, bricks);
-    })
+            callback(null, bricks)
+        })
 }
 
 module.exports.getBrick = function(id, callback){

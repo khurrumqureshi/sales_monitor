@@ -46,7 +46,7 @@ module.exports.updateSalesRep = function(id,dataToUpdate,callback){
 module.exports.getSalesRep = function(id,callback){
     salesRepModel
         .findOne({ _id:ObjectId.fromString(id) })
-        .populate('businessUnitId bricks')
+        .populate('businessUnitId bricks Bricks.distributorId')
         .exec(function (err, salesRep) {
             if (err)
                 return callback(new customError.Database("Failed to get record."),null);

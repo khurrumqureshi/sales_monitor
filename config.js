@@ -13,7 +13,7 @@ module.exports.dbOptions = {
     server:{
         'auto_reconnect': true,
         'poolSize': 20,
-        'socketOptions': {keepAlive: 60}
+        'socketOptions': {keepAlive: 1}
     }
 };
 

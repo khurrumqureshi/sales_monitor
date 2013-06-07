@@ -4,17 +4,18 @@ var mongoose = require('mongoose'),
     customError = require('../lib/custom_errors'),
     utils = require('../lib/util');
 
-var distributor = new Schema({
-    name: String,
-    type: String,
-    address: String,
-    phone: String
+var budget = new Schema({
+    productId: Schema.Types.ObjectId,
+    units: Number,
+    month: Number,
+    year: Number
 });
 
-var distributorModel = mongoose.model('Distributors', distributor);
+var budgetModel = mongoose.model('Budgets', budget);
 
-module.exports.addDistributor = function(data, callback){
-    new distributorModel(data).save(function(err){
+module.exports.addBudget = function(data, callback){
+    data.productId = ObjectId.fromString(data.productId);
+    new budgetModel(data).save(function(err){
         if(err)
             return callback(new customError.Database("Failed to save record."),null);
 
@@ -22,21 +23,21 @@ module.exports.addDistributor = function(data, callback){
     })
 }
 
-module.exports.getDistributors = function(query, callback){
-    distributorModel.find(query,function(err, distributors){
+module.exports.getBudgets = function(query, callback){
+    budgetModel.find(query,function(err, budgets){
         if (err)
             return callback(new customError.Database("Failed to get records."),null);
 
-        callback(null, distributors);
+        callback(null, budgets);
     })
 }
 
-module.exports.getDistributor = function(id, callback){
-    distributorModel.findOne({ _id:ObjectId.fromString(id) },function(err, distributor){
+module.exports.getBudget = function(query, callback){
+    budgetModel.findOne(query,function(err, budget){
         if (err)
             return callback(new customError.Database("Failed to get record."),null);
 
-        callback(null, distributor);
+        callback(null, budget);
     })
 }
 

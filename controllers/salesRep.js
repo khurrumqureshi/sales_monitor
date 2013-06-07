@@ -2,7 +2,8 @@ var salesRepModel = require('../model/salesRep'),
     config = require('../config'),
     customError = require('../lib/custom_errors'),
     async = require('async'),
-    brickModel = require('../model/brick');
+    brickModel = require('../model/brick'),
+    budgetModel = require('../model/budget');
 
 exports.setup = function(app) {
     app.get('/api/salesRep', getSalesRepList);
@@ -31,7 +32,20 @@ function getSalesRep(req, res, next) {
         if(err)
             return next(err);
 
-        res.send(salesReps);
+        var cloneSalesRep =  salesReps.toObject();
+        var now = new Date();
+        async.forEach(cloneSalesRep.businessUnitId.products,function(product,cb){
+            budgetModel.getBudget({productId:product._id,month:(now.getMonth()+1),year:now.getFullYear()},function(err,budget){
+                if(err || budget==null)
+                cb();
+                else{
+                    product["budgetUnits"] = budget.units;
+                    cb();
+                }
+            })
+        },function(err){
+            res.send(cloneSalesRep);
+        })
     })
 }
 
