@@ -58,6 +58,15 @@ module.exports.getSalesRep = function(id,callback){
         })
 }
 
+module.exports.getBasicSalesRep = function(id,callback){
+    salesRepModel.findOne({ _id:ObjectId.fromString(id) },function(err,salesRep){
+        if (err)
+            return callback(new customError.Database("Failed to get record."),null);
+
+        callback(null, salesRep)
+    })
+}
+
 module.exports.getSalesReps = function(query, callback){
     salesRepModel
         .find(query)

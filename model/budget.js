@@ -7,6 +7,7 @@ var mongoose = require('mongoose'),
 var budget = new Schema({
     productId: Schema.Types.ObjectId,
     units: Number,
+    value: Number,
     month: Number,
     year: Number
 });
@@ -39,5 +40,26 @@ module.exports.getBudget = function(query, callback){
 
         callback(null, budget);
     })
+}
+
+module.exports.getBudgetbyMonthbyYear = function(month,year,callback){
+    budgetModel.aggregate(
+        {
+            $match: { month: month , year:year}
+        },
+        { $group: { _id: {year:'$year',month:'$month'}, budgetUnit: { $sum: '$units' }, budgetValue:{ $sum:'$value'}}},
+        { $project: {
+            _id: 0,
+            year:'$_id.year',
+            month:'$_id.month',
+            budgetUnits: '$budgetUnit',
+            budgetValue: '$budgetValue'
+        }},
+        function (err, budget){
+            if(err)
+                callback(err, null);
+            else
+                callback(null,budget && budget.length >0 ? budget[0] : null);
+        })
 }
 

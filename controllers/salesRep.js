@@ -2,11 +2,14 @@ var salesRepModel = require('../model/salesRep'),
     config = require('../config'),
     customError = require('../lib/custom_errors'),
     async = require('async'),
-    brickModel = require('../model/brick');
+    brickModel = require('../model/brick'),
+    salesModel = require('../model/sales'),
+    budgetModel = require('../model/budget');
 
 exports.setup = function(app) {
     app.get('/api/salesRep', getSalesRepList);
     app.get('/api/salesRep/:salesRep_id', getSalesRep);
+    app.get('/api/salesRep/:id/salesTrend', getSalesTrend);
     app.post('/api/salesRep', insertSalesRep);
     app.put('/api/salesRep/:id/bricks', updateSalesRepBricks);
 }
@@ -80,5 +83,40 @@ function updateSalesRepBricks(req, res, next) {
     }
     else
         next(new customError.MissingParameter("Required parameter missing"));
+}
+
+/**
+ * GET /api/salesRep/:id/salesTrend?startDate=4324324&endDate=423423342
+ */
+
+function getSalesTrend(req, res, next){
+    if(req.params.id && req.query.startDate && req.query.endDate){
+        salesRepModel.getBasicSalesRep(req.params.id,function(err, salesRep){
+            if(err)
+                return next(err);
+
+            salesModel.getSalesTrends(salesRep.bricks,parseInt(req.query.startDate),parseInt(req.query.endDate),function(err,sales){
+                if(err)
+                    return next(err);
+
+                async.forEach(sales,function(sale,cb){
+                    budgetModel.getBudgetbyMonthbyYear(sale.month,sale.year,function(err,budget){
+                        if(err || budget==null)
+                            cb();
+                        else{
+                            sale["budgetUnits"] = budget.budgetUnits;
+                            sale["budgetValue"] = budget.budgetValue;
+                            cb();
+                        }
+                    })
+                },function(err){
+                    res.send(sales);
+                })
+            })
+        })
+    }
+    else
+        next(new customError.MissingParameter("Required parameter missing"));
+
 }
 
