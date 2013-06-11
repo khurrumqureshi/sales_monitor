@@ -38,7 +38,7 @@ module.exports = function(db,app,passport){
 
 function configureControllers(app) {
     [
-        'businessUnit', 'salesRep', 'authentication', 'distributor', 'brick', 'chemist', 'budget', 'sales'
+        'businessUnit', 'salesRep', 'authentication', 'distributor', 'brick', 'chemist', 'budget', 'sales', 'doctor'
     ].map(function(controllerName) {
             var controller = require('../controllers/' + controllerName);
             return controller.setup(app);

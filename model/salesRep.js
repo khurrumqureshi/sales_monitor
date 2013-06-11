@@ -15,7 +15,7 @@ var salesRepSchema = new Schema({
     password: String,
     businessUnitId : {type:Schema.Types.ObjectId, ref:'BusinessUnit'},
     bricks: [{type:Schema.Types.ObjectId, ref:'Bricks'}],
-    doctors: [{type:Schema.Types.ObjectId, ref:'Doctor'}]
+    doctors: [{type:Schema.Types.ObjectId, ref:'Doctors'}]
 });
 
 var salesRepModel = mongoose.model('SalesRep', salesRepSchema);
@@ -49,7 +49,7 @@ module.exports.updateSalesRep = function(id,dataToUpdate,callback){
 module.exports.getSalesRep = function(id,callback){
     salesRepModel
         .findOne({ _id:ObjectId.fromString(id) })
-        .populate('businessUnitId bricks Bricks.distributorId')
+        .populate('businessUnitId bricks doctors')
         .exec(function (err, salesRep) {
             if (err)
                 return callback(new customError.Database("Failed to get record."),null);
@@ -70,7 +70,7 @@ module.exports.getBasicSalesRep = function(id,callback){
 module.exports.getSalesReps = function(query, callback){
     salesRepModel
         .find(query)
-        .populate('businessUnitId bricks')
+        .populate('businessUnitId bricks doctors')
         .exec(function (err, salesReps) {
             if (err)
                 return callback(new customError.Database("Failed to get records."),null);

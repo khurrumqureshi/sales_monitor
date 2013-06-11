@@ -4,7 +4,8 @@ var salesRepModel = require('../model/salesRep'),
     async = require('async'),
     brickModel = require('../model/brick'),
     salesModel = require('../model/sales'),
-    budgetModel = require('../model/budget');
+    budgetModel = require('../model/budget'),
+    utils = require('../lib/util');
 
 exports.setup = function(app) {
     app.get('/api/salesRep', getSalesRepList);
@@ -106,6 +107,7 @@ function getSalesTrend(req, res, next){
                         else{
                             sale["budgetUnits"] = budget.budgetUnits;
                             sale["budgetValue"] = budget.budgetValue;
+                            sale["month"] = utils.getMonthName(sale.month);
                             cb();
                         }
                     })
