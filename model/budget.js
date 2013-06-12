@@ -42,10 +42,10 @@ module.exports.getBudget = function(query, callback){
     })
 }
 
-module.exports.getBudgetbyMonthbyYear = function(month,year,callback){
+module.exports.getBudgetbyMonthbyYear = function(matchQuery,callback){
     budgetModel.aggregate(
         {
-            $match: { month: month , year:year}
+            $match: matchQuery
         },
         { $group: { _id: {year:'$year',month:'$month'}, budgetUnit: { $sum: '$units' }, budgetValue:{ $sum:'$value'}}},
         { $project: {

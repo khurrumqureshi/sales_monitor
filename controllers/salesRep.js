@@ -5,7 +5,8 @@ var salesRepModel = require('../model/salesRep'),
     brickModel = require('../model/brick'),
     salesModel = require('../model/sales'),
     budgetModel = require('../model/budget'),
-    utils = require('../lib/util');
+    utils = require('../lib/util'),
+    ObjectId = require('mongoose').Types.ObjectId;
 
 exports.setup = function(app) {
     app.get('/api/salesRep', getSalesRepList);
@@ -87,7 +88,7 @@ function updateSalesRepBricks(req, res, next) {
 }
 
 /**
- * GET /api/salesRep/:id/salesTrend?startDate=4324324&endDate=423423342
+ * GET /api/salesRep/:id/salesTrend?startDate=4324324&endDate=423423342&productId=5242jh42kh
  */
 
 function getSalesTrend(req, res, next){
@@ -96,12 +97,19 @@ function getSalesTrend(req, res, next){
             if(err)
                 return next(err);
 
-            salesModel.getSalesTrends(salesRep.bricks,parseInt(req.query.startDate),parseInt(req.query.endDate),function(err,sales){
+            var matchQuery = { brickId: {$in: salesRep.bricks}, updatedDate:{$gte:parseInt(req.query.startDate),$lt:parseInt(req.query.endDate)}};
+            if(req.query.productId && req.query.productId.length>0)
+                matchQuery["productId"] = ObjectId.fromString(req.query.productId);
+
+            salesModel.getSalesTrends(matchQuery,function(err,sales){
                 if(err)
                     return next(err);
 
                 async.forEach(sales,function(sale,cb){
-                    budgetModel.getBudgetbyMonthbyYear(sale.month,sale.year,function(err,budget){
+                    var budgetMatchQuery = { month: sale.month , year:sale.year};
+                    if(req.query.productId && req.query.productId.length>0)
+                        budgetMatchQuery["productId"] = ObjectId.fromString(req.query.productId);
+                    budgetModel.getBudgetbyMonthbyYear(budgetMatchQuery,function(err,budget){
                         if(err || budget==null)
                             cb();
                         else{

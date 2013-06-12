@@ -74,10 +74,10 @@ module.exports.getSalesByBricks = function(bricks,startPeriod,endperiod,callback
         })
 }
 
-module.exports.getSalesTrends = function(bricks,startPeriod,endperiod,callback){
+module.exports.getSalesTrends = function(matchQuery,callback){
     salesModel.aggregate(
         {
-            $match: { brickId: {$in: bricks}, updatedDate:{$gte:startPeriod,$lt:endperiod}}
+            $match: matchQuery
         },
         { $group: { _id: {year:'$year',month:'$month'}, salesUnit: { $sum: '$unitsSold' }, salesValue:{ $sum:'$unitsValue'}}},
         { $project: {
