@@ -7,7 +7,9 @@ var doctorModel = require('../model/doctor'),
 
 exports.setup = function(app) {
     app.get('/api/doctor', getDoctorList);
+    app.put('/api/doctor/:id', updateDoctor);
     app.post('/api/salesRep/:id/doctor', insertDoctor);
+    app.delete('/api/doctor/:id', updateDoctor);
 }
 
 /**
@@ -44,3 +46,24 @@ function insertDoctor(req, res, next) {
         next(new customError.MissingParameter("Required parameter missing"));
 }
 
+/**
+ * PUT /api/doctor/:id
+ */
+
+function updateDoctor(req, res, next){
+    var data = req.param('doctor',null);
+    if(data!=null){
+        doctorModel.updateDoctor(req.params.id,{$set:data},function(err,result){
+            if(err)
+                return next(err);
+
+            res.send(result);
+        })
+    }
+    else
+        next(new customError.MissingParameter("Required parameter missing"));
+}
+
+/**
+ * DELETE /api/doctor/:id
+ */

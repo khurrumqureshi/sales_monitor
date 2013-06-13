@@ -84,10 +84,7 @@ module.exports.verifyCredentials = function(query,callback){
         if (err)
             return callback(new customError.Database("Failed to get record."),null);
 
-        if(salesRep==null)
-            callback(new customError.InvalidCredentials("Failed to verify credentials"),null);
-        else
-            callback(null, salesRep)
+        callback(null, salesRep)
     })
 }
 

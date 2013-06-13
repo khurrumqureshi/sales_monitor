@@ -39,6 +39,24 @@ module.exports.addDoctor = function(data, callback){
     //})
 }
 
+module.exports.updateDoctor = function(id,dataToUpdate,callback){
+    doctorModel.findByIdAndUpdate(ObjectId.fromString(id),dataToUpdate,function(err, doctor){
+        if(err)
+            return callback(new customError.Database("Failed to update record."),null);
+
+        callback(null,'Record has been updated');
+    })
+}
+
+module.exports.removeDoctor = function(id,callback){
+    doctorModel.findByIdAndRemove(ObjectId.fromString(id),function(err,doctor){
+        if(err)
+            return callback(new customError.Database("Failed to remove record."),null);
+
+        callback(null,'Record has been removed.');
+    })
+}
+
 module.exports.getDoctors = function(query, callback){
 //    doctorModel
 //        .find(query)

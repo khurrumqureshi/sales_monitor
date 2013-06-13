@@ -14,13 +14,13 @@ module.exports = function(passport){
     passport.use(new LocalStrategy(
         function(username, password, done) {
             // asynchronous verification, for effect...
-            process.nextTick(function () {
+            //process.nextTick(function () {
                salesRepModel.verifyCredentials({email:username,password:password},function(err,user){
-                    if (err || user==null) { return done(err); }
-
+                   if (err) { return done(err); }
+                   if (!user) { return done(null, false, { message: 'Invalid Credentials' }); }
                     return done(null, user);
                 })
-            });
+            //});
         }
     ));
 }

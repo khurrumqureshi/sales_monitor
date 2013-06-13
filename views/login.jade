@@ -1,0 +1,39 @@
+extends layout
+
+block body
+  .container
+      .row
+          .span4.offset4.well
+            legend Please Sign In
+            #login-error.alert.alert-error(style='font: 14px bold; text-align:center; display: none;')
+              a.close(data-dismiss='alert', href='#') ×
+              | Incorrect Username or Password!
+            form#login(method='POST', action='/loginWeb', accept-charset='UTF-8')
+              input#username.span4(type='text', name='username', placeholder='Username')
+              input#password.span4(type='password', name='password', placeholder='Password')
+              button.btn.btn-info.btn-block(onclick='javascript:validate(event);') Sign in
+
+    script
+      function validate(event) {
+          event.preventDefault();
+          if($("#username").val().trim() == ""){
+                  $("div#login-error").show();
+                  $("#username").focus();
+                  return;
+          }
+          else
+                  $("div#login-error").hide();
+          if($("#password").val().trim() == ""){
+                  $("div#login-error").show();
+                  $("#password").focus();
+                  return;
+          }
+          else
+            $("#login").submit();
+          }
+      $(document).ready(function(){
+         var loginStatus = #{loginFailure};
+         if(loginStatus)
+         $("div#login-error").show();
+
+      })

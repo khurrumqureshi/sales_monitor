@@ -4,9 +4,10 @@ var passport = require('passport'),
 
 exports.setup = function(app) {
     app.get('/',title);
-    app.get('/login',login);
+    app.get('/main',main);
     app.get('/logout', logout)
     app.post('/login', authenticate);
+    app.post('/loginWeb', authenticateWeb);
 }
 
 function authenticate(req, res, next){
@@ -28,15 +29,38 @@ function authenticate(req, res, next){
     })(req, res, next);
 };
 
+function authenticateWeb(req, res, next){
+    passport.authenticate('local', function(err, user, info) {
+        if (err) { return next(err);}
+
+        if (!user) {
+            req.session.loginStatus = true;
+            return res.redirect('/');
+        }
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+
+            salesRepModel.getSalesRep(user._id.toString(),function(err, salesRep){
+                salesRepModel.incorporateSalesData(salesRep,function(newSalesRep){
+                    req.session.loginStatus = false;
+                    req.session.user = newSalesRep;
+                    res.redirect('/main');
+                })
+            })
+        });
+    })(req, res, next);
+};
+
 function title(req, res, next){
-    res.render('index', { user: req.user });
+    res.render('login',{loginFailure:typeof req.session.loginStatus == "undefined" ? false : req.session.loginStatus});
 }
 
-function login(req, res, next){
-    res.render('login', { user: req.user });
+function main(req, res, next){
+    res.render('main',{user:JSON.stringify(req.session.user ? req.session.user : {})});
 }
 
 function logout(req,res,next){
+    req.session.user = {};
     req.logout();
     res.redirect('/');
 }

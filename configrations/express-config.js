@@ -5,7 +5,7 @@ var mongoStore = require('connect-mongo')(express)
 module.exports = function(db,app,passport){
     app.configure(function() {
         app.set('views', config.projectDirectory + '/views');
-        app.set('view engine', 'ejs');
+        app.set('view engine', 'jade');
         app.use(express.logger('dev'));
         app.use(express.compress());
         app.use(express.methodOverride());
@@ -17,6 +17,7 @@ module.exports = function(db,app,passport){
         app.use(express.bodyParser());
         app.use(passport.initialize());
         app.use(passport.session());
+        app.use(express.static(config.projectDirectory + '/public'));
     });
 
     app.configure('development', function() {

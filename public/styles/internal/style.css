@@ -1,0 +1,10 @@
+/*body {*/
+    /*background-image: url("../../images/website-bg.png");*/
+    /*background-color: #00c6ff;*/
+    /*background-repeat: repeat-y;*/
+/*}*/
+
+.table th,
+.table td {
+    text-align: center;
+}
