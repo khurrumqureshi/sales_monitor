@@ -9,7 +9,7 @@ exports.setup = function(app) {
     app.get('/api/doctor', getDoctorList);
     app.put('/api/doctor/:id', updateDoctor);
     app.post('/api/salesRep/:id/doctor', insertDoctor);
-    app.delete('/api/doctor/:id', updateDoctor);
+    app.delete('/api/doctor/:id', deleteDoctor);
 }
 
 /**
@@ -67,3 +67,12 @@ function updateDoctor(req, res, next){
 /**
  * DELETE /api/doctor/:id
  */
+
+function deleteDoctor(req, res, next){
+    doctorModel.removeDoctor(req.params.id,function(err,result){
+        if(err)
+            return next(err);
+
+        res.send(result);
+    })
+}

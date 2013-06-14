@@ -12,6 +12,7 @@ var express = require('express'),
 process.on('uncaughtException', function (err) {
   console.log("Node NOT Exiting...");
   console.log(err);
+    console.log(err.stack);
 });
 
 var app = express();

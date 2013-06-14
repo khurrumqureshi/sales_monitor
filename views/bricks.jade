@@ -1,0 +1,168 @@
+extends layout
+
+block body
+  div(style='height: 350px; width: 1100px; margin-left:5%;')
+      #chartdiv(style='height: 300px;width: 540px; float: left;')
+      #piediv(style='height: 300px;width: 540px; float: right;')
+  .span5(style='margin-left:35%;')
+      table#brickSales.table.table-striped.table-condensed
+          thead
+            tr
+              th Brick Name
+              th Ach Units
+              th Ach Value
+          tbody
+
+
+    script
+      $(document).ready(function(){
+       var userProfile = !{user};
+       var productSale = [];
+       var bricks = [];
+       var brickData = "";
+       var brickShare = [];
+       var data = [];
+       var colors = Highcharts.getOptions().colors;
+       var count = 0;
+       for(var key in userProfile.bricks){
+           var brick = userProfile.bricks[key];
+           bricks.push(brick.name);
+           var productSales = 0;
+           var productUnits = 0;
+           var products = [];
+           var productViseSale = [];
+           for(var productKey in brick.sales){
+             var product = brick.sales[productKey];
+             productSales = productSales + product.salesValue;
+             productUnits = productUnits + product.salesUnit;
+             products.push(product.productName);
+             productViseSale.push(product.salesValue);
+           }
+           productSale.push(productSales);
+           var temp = [];
+           temp.push(brick.name);
+           temp.push(productSales);
+           brickShare.push(temp);
+           data.push({
+               y: productSales,
+               color: colors[count],
+               drilldown: {
+                   name: brick.name,
+                   categories: products,
+                   data: productViseSale,
+                   color: colors[count]
+               }
+           })
+           count++;
+           brickData = brickData + "<tr> \
+                                   <td>"+brick.name+"</td> \
+                                   <td>"+productUnits+"</td> \
+                                   <td>"+numeral(productSales).format('0,0')+"</td> \
+                                   </tr>"
+       }
+
+      function setChart(name, categories, data, color) {
+          chart.xAxis[0].setCategories(categories, false);
+          chart.series[0].remove(false);
+          chart.addSeries({
+              name: name,
+              data: data,
+              color: color || 'white'
+          }, false);
+          chart.redraw();
+      }
+
+      var chart = $('#chartdiv').highcharts({
+                  chart: {
+                      type: 'column'
+                  },
+                  title: {
+                      text: 'Brick Sales - By Value - By Product'
+                  },
+                  xAxis: {
+                      categories: bricks
+                  },
+                  yAxis: {
+                      title: {
+                          text: 'Values'
+                      }
+                  },
+                  plotOptions: {
+                      column: {
+                          cursor: 'pointer',
+                          point: {
+                              events: {
+                                  click: function() {
+                                      var drilldown = this.drilldown;
+                                      if (drilldown) {
+                                          setChart(drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                      } else {
+                                          setChart('Brick Sales', bricks, data);
+                                      }
+                                  }
+                              }
+                          },
+                          dataLabels: {
+                              enabled: true,
+                              style: {
+                                  fontWeight: 'bold'
+                              },
+                              formatter: function() {
+                                  return this.y;
+                              }
+                          }
+                      }
+                  },
+                  tooltip: {
+                      formatter: function() {
+                          var point = this.point,
+                              s = this.x +':<b>'+ this.y +'</b><br/>';
+                          if (point.drilldown) {
+                              s += 'Click to view '+ point.category +' products';
+                          } else {
+                              s += 'Click to return to bricks';
+                          }
+                          return s;
+                      }
+                  },
+                  series: [{
+                      name: 'Brick Sales',
+                      data: data,
+                      color: 'white'
+                  }],
+                  exporting: {
+                      enabled: true
+                  }
+              }).highcharts();
+
+      $('#piediv').highcharts({
+          chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+              },
+              title: {
+                  text: 'Brick Contribution In Total Sales - By Value'
+              },
+              tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+                  percentageDecimals: 1
+              },
+              plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: false
+                      },
+                      showInLegend: true
+                  }
+              },
+              series: [{
+                  type: 'pie',
+                  name: 'Browser share',
+                  data: brickShare
+              }]
+      });
+      $('#brickSales > tbody:last').append(brickData);
+      })

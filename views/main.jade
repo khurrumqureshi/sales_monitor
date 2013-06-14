@@ -1,46 +1,9 @@
-html(xmlns='http://www.w3.org/1999/xhtml')
-head
-    title Sales Monitor
-    meta(http-equiv='cache-control', content='no-cache', charset='UTF-8')
-    script(src='scripts/external/jquery-latest.min.js')
-    script(src='scripts/external/bootstrap.min.js')
-    script(type='text/javascript', src='scripts/external/jquery.jqplot.min.js')
-    script(type='text/javascript', src='scripts/external/jqplot.barRenderer.min.js')
-    script(type='text/javascript', src='scripts/external/jqplot.categoryAxisRenderer.min.js')
-    script(type='text/javascript', src='scripts/external/jqplot.pointLabels.min.js')
-    script(type='text/javascript', src='scripts/external/jqplot.pieRenderer.min.js')
-    script(type='text/javascript', src='scripts/external/numeral.min.js')
-    script(type='text/javascript', src='scripts/custom/master.js')
-    link(href='styles/external/bootstrap.css', rel='stylesheet', media='screen')
-    link(href='styles/external/jquery.jqplot.css', rel='stylesheet', media='screen')
-    link(href='styles/internal/style.css', rel='stylesheet', media='screen')
+extends layout
 
-  body
-  .navbar.navbar-inverse.nav
-      .navbar-inner
-          .container
-            a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
-              span.icon-bar
-              span.icon-bar
-              span.icon-bar
-            a.brand(href='/') Business Card
-            .nav-collapse.collapse
-              ul.nav
-                li.divider-vertical
-              .pull-right
-                ul.nav.pull-right
-                  li.dropdown
-                    a.dropdown-toggle(href='#', data-toggle='dropdown')
-                      | Welcome, User
-                      b.caret
-                    ul.dropdown-menu
-                      li
-                        a(href='/logout')
-                          i.icon-off
-                          | Logout
-  div(style='height: 350px; width: 1100px; margin-left:10%;')
-      #chartdiv(style='300px;width: 500px; float: left;')
-      #piediv(style='300px;width: 500px; float: right;')
+block body
+  div(style='height: 350px; width: 1100px; margin-left:5%;')
+      #chartdiv(style='height: 300px;width: 540px; float: left;')
+      #piediv(style='height: 300px;width: 540px; float: right;')
   .span9(style='margin-left:20%;')
       table#productSales.table.table-striped.table-condensed
           thead
@@ -57,117 +20,105 @@ head
 
     script
       $(document).ready(function(){
-      var userProfile = !{user};
-          var budget = [];
-          var ach = [];
-          var products = [];
-          var productData = "";
-          for(var key in userProfile.businessUnitId.products){
-             var product = userProfile.businessUnitId.products[key];
-             var budgetValue =  product.budgetUnits*product.price;
-             var salesValue = product.salesUnit*product.price;
-             products.push(product.productName);
-             budget.push(budgetValue);
-             ach.push(salesValue);
-             productData = productData + "<tr> \
-                 <td>"+product.productName+"</td> \
-                 <td>"+product.price+"</td> \
-                 <td>"+product.budgetUnits+"</td> \
-                 <td>"+numeral(budgetValue).format('0,0')+"</td> \
-                 <td>"+product.salesUnit+"</td> \
-                 <td>"+numeral(salesValue).format('0,0')+"</td> \
-                 <td>"+numeral((salesValue/budgetValue)).format('0.00%')+"</td> \
-                 </tr>"
-          }
-          var s1 = budget;
-          var s2 = ach;
-          // Can specify a custom tick Array.
-          // Ticks should match up one for each y value (category) in the series.
-          var ticks = products;
+       var userProfile = !{user};
+       var budget = [];
+       var ach = [];
+       var products = [];
+       var productData = "";
+       var productShare = [];
+       for(var key in userProfile.businessUnitId.products){
+           var product = userProfile.businessUnitId.products[key];
+           var temp = [];
+           var budgetValue =  product.budgetUnits*product.price;
+           var salesValue = product.salesUnit*product.price;
+           products.push(product.productName);
+           budget.push(budgetValue);
+           ach.push(salesValue);
+           temp.push(product.productName);
+           temp.push(salesValue);
+           productShare.push(temp);
+           productData = productData + "<tr> \
+                        <td>"+product.productName+"</td> \
+                        <td>"+product.price+"</td> \
+                        <td>"+product.budgetUnits+"</td> \
+                        <td>"+product.salesUnit+"</td> \
+                        <td>"+numeral(budgetValue).format('0,0')+"</td> \
+                        <td>"+numeral(salesValue).format('0,0')+"</td> \
+                        <td>"+numeral((salesValue/budgetValue)).format('0.00%')+"</td> \
+                        </tr>"
+       }
 
-          var plot1 = $.jqplot('chartdiv', [s1, s2], {
-              title:'Budget vs. Achievement - By Product',
-
-              grid: {
-                 drawBorder: false,
-                 drawGridlines: false,
-                 background: '#ffffff',
-                 shadow:false
-              },
-              // The "seriesDefaults" option is an options object that will
-              // be applied to all series in the chart.
-              seriesDefaults:{
-                  renderer:$.jqplot.BarRenderer,
-                  rendererOptions: {fillToZero: true}
-              },
-              // Custom labels for the series are specified with the "label"
-              // option on the series option.  Here a series option object
-              // is specified for each series.
-              series:[
-                  {label:'Budget Value'},
-                  {label:'Achieved Value'}
-              ],
-              // Show the legend and put it outside the grid, but inside the
-              // plot container, shrinking the grid to accomodate the legend.
-              // A value of "outside" would not shrink the grid and allow
-              // the legend to overflow the container.
-              legend: {
-                  show: true
-              },
-              axes: {
-                  // Use a category axis on the x axis and use our custom ticks.
-                  xaxis: {
-                      renderer: $.jqplot.CategoryAxisRenderer,
-                      ticks: ticks
+      $('#chartdiv').highcharts({
+                  chart: {
+                      type: 'column'
                   },
-                  // Pad the y axis just a little so bars can get close to, but
-                  // not touch, the grid boundaries.  1.2 is the default padding.
-                  yaxis: {
-                      pad: 1.05,
-                      tickOptions: {formatString: '$%d'}
-                  }
-              }
-          });
-
-          var brickSales = [];
-          for(var key in userProfile.bricks){
-          var brick = userProfile.bricks[key];
-          var temp = [];
-          var salesValue = 0;
-          for(var productKey in brick.sales){
-          var product = brick.sales[productKey];
-          salesValue = salesValue + product.salesValue;
-          }
-          temp.push(brick.name);
-          temp.push(salesValue);
-          brickSales.push(temp);
-          }
-          var s1 = brickSales;
-
-              var plot8 = $.jqplot('piediv', [s1], {
-                  title:'Brick Sales - By Value Contribution',
-                  grid: {
-                      drawBorder: false,
-                      drawGridlines: false,
-                      background: '#ffffff',
-                      shadow:false
+                  title: {
+                      text: 'Budget Vs. Achievement - By Product - By Value'
                   },
-                  axesDefaults: {
-
+                  xAxis: {
+                      categories: products
                   },
-                  seriesDefaults:{
-                      renderer:$.jqplot.PieRenderer,
-                      rendererOptions: {
-                          showDataLabels: true
+                  yAxis: {
+                      min: 0,
+                      title: {
+                          text: 'Values'
                       }
                   },
-                  legend: {
-                      show: true,
-                      rendererOptions: {
-                          numberRows: 1
-                      },
-                      location: 's'
-                  }
+                  tooltip: {
+                      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                      pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                          '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                      footerFormat: '</table>',
+                      shared: true,
+                      useHTML: true
+                  },
+                  plotOptions: {
+                      column: {
+                          pointPadding: 0.2,
+                          borderWidth: 0
+                      }
+                  },
+                  series: [{
+                      name: 'Budget',
+                      data: budget
+
+                  }, {
+                      name: 'Ach',
+                      data: ach
+
+                  }]
               });
-          $('#productSales > tbody:last').append(productData);
+
+
+      $('#piediv').highcharts({
+          chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+              },
+              title: {
+                  text: 'Product Contribution In Total Sales - By Value'
+              },
+              tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+                  percentageDecimals: 1
+              },
+              plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: false
+                      },
+                      showInLegend: true
+                  }
+              },
+              series: [{
+                  type: 'pie',
+                  name: 'Browser share',
+                  data: productShare
+              }]
+      });
+
+      $('#productSales > tbody:last').append(productData);
       })

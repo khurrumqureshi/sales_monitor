@@ -1,11 +1,47 @@
 html
 head
-    title Business Card Manager
+    title Sales Monitor
     meta(http-equiv='cache-control', content='no-cache', charset='UTF-8')
     script(src='scripts/external/jquery-latest.min.js')
     script(src='scripts/external/bootstrap.min.js')
+    script(type='text/javascript', src='scripts/external/numeral.min.js')
+    script(type='text/javascript', src='scripts/external/highcharts/highcharts.js')
+    script(type='text/javascript', src='scripts/external/highcharts/exporting.js')
+    script(type='text/javascript', src='scripts/external/highcharts/themes/gray.js')
     script(type='text/javascript', src='scripts/custom/master.js')
     link(href='styles/external/bootstrap.css', rel='stylesheet', media='screen')
+    link(href='styles/external/jquery.jqplot.css', rel='stylesheet', media='screen')
     link(href='styles/internal/style.css', rel='stylesheet', media='screen')
+
   body
-    block body
+  .navbar.navbar-inverse
+      .navbar-inner
+          .container-fluid
+            a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            a.brand(href='#', name='top') Sales Monitor
+            .nav-collapse.collapse
+              ul.nav
+                li
+                  a(href='/main')
+                    i.icon-signal.icon-white
+                    | Products Stats
+                li.divider-vertical
+                li
+                  a(href='/bricks')
+                    i.icon-signal.icon-white
+                    | Bricks Stats
+                li.divider-vertical
+              .btn-group.pull-right
+                a.btn.dropdown-toggle(data-toggle='dropdown', href='#')
+                  i.icon-user
+                  | Welcome
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href='/logout')
+                      i.icon-share
+                      | Logout
+  block body
