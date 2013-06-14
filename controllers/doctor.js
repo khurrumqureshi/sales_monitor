@@ -38,7 +38,7 @@ function insertDoctor(req, res, next) {
                 if(err)
                     return next(err);
 
-                res.send({status:"Record has been inserted."});
+                res.send(doctor);
             })
         })
     }
@@ -53,11 +53,11 @@ function insertDoctor(req, res, next) {
 function updateDoctor(req, res, next){
     var data = req.param('doctor',null);
     if(data!=null){
-        doctorModel.updateDoctor(req.params.id,{$set:data},function(err,result){
+        doctorModel.updateDoctor(req.params.id,{$set:data},function(err,doctor){
             if(err)
                 return next(err);
 
-            res.send(result);
+            res.send(doctor);
         })
     }
     else

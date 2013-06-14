@@ -8,9 +8,10 @@ head
     script(type='text/javascript', src='scripts/external/highcharts/highcharts.js')
     script(type='text/javascript', src='scripts/external/highcharts/exporting.js')
     script(type='text/javascript', src='scripts/external/highcharts/themes/gray.js')
+    script(type='text/javascript', src='scripts/external/bootstrap-datepicker.js')
     script(type='text/javascript', src='scripts/custom/master.js')
     link(href='styles/external/bootstrap.css', rel='stylesheet', media='screen')
-    link(href='styles/external/jquery.jqplot.css', rel='stylesheet', media='screen')
+    link(href='styles/external/datepicker.css', rel='stylesheet', media='screen')
     link(href='styles/internal/style.css', rel='stylesheet', media='screen')
 
   body
@@ -33,6 +34,11 @@ head
                   a(href='/bricks')
                     i.icon-signal.icon-white
                     | Bricks Stats
+                li.divider-vertical
+                li
+                  a(href='/trends')
+                    i.icon-signal.icon-white
+                    | Sales Trends
                 li.divider-vertical
               .btn-group.pull-right
                 a.btn.dropdown-toggle(data-toggle='dropdown', href='#')

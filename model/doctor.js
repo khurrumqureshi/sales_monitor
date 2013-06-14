@@ -44,7 +44,7 @@ module.exports.updateDoctor = function(id,dataToUpdate,callback){
         if(err)
             return callback(new customError.Database("Failed to update record."),null);
 
-        callback(null,{status:'Record has been updated'});
+        callback(null,doctor);
     })
 }
 

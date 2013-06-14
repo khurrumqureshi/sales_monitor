@@ -6,6 +6,7 @@ exports.setup = function(app) {
     app.get('/',title);
     app.get('/main',main);
     app.get('/bricks', brickSales)
+    app.get('/trends', salesTrends)
     app.get('/logout', logout)
     app.post('/login', authenticate);
     app.post('/loginWeb', authenticateWeb);
@@ -62,6 +63,10 @@ function main(req, res, next){
 
 function brickSales(req, res, next){
     res.render('bricks',{user:JSON.stringify(req.session.user ? req.session.user : {})});
+}
+
+function salesTrends(req, res, next){
+    res.render('trends',{user:JSON.stringify(req.session.user ? req.session.user : {})});
 }
 
 function logout(req,res,next){
