@@ -13,6 +13,7 @@ exports.setup = function(app) {
     app.get('/api/salesRep/:salesRep_id', getSalesRep);
     app.get('/api/salesRep/:id/salesTrend', getSalesTrend);
     app.post('/api/salesRep', insertSalesRep);
+    app.post('/salesTrend', showSalesTrend);
     app.put('/api/salesRep/:id/bricks', updateSalesRepBricks);
 }
 
@@ -130,3 +131,40 @@ function getSalesTrend(req, res, next){
 
 }
 
+/**
+ * POST /api/salesRep/salesTrend
+ */
+
+function showSalesTrend(req, res, next){
+    salesRepModel.getBasicSalesRep(req.session.user._id,function(err, salesRep){
+        if(err)
+            return next(err);
+
+        var matchQuery = { brickId: {$in: salesRep.bricks}, updatedDate:{$gte:(new Date(req.body.startDate)).getTime(),$lt:(new Date(req.body.endDate)).getTime()}};
+        if(req.query.productId && req.query.productId.length>0)
+            matchQuery["productId"] = ObjectId.fromString(req.query.productId);
+
+        salesModel.getSalesTrends(matchQuery,function(err,sales){
+            if(err)
+                return next(err);
+
+            async.forEach(sales,function(sale,cb){
+                var budgetMatchQuery = { month: sale.month , year:sale.year};
+                if(req.query.productId && req.query.productId.length>0)
+                    budgetMatchQuery["productId"] = ObjectId.fromString(req.query.productId);
+                budgetModel.getBudgetbyMonthbyYear(budgetMatchQuery,function(err,budget){
+                    if(err || budget==null)
+                        cb();
+                    else{
+                        sale["budgetUnits"] = budget.budgetUnits;
+                        sale["budgetValue"] = budget.budgetValue;
+                        sale["month"] = utils.getMonthName(sale.month);
+                        cb();
+                    }
+                })
+            },function(err){
+                res.render('trends',{sales:JSON.stringify(sales)});
+            })
+        })
+    })
+}

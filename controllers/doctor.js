@@ -6,22 +6,11 @@ var doctorModel = require('../model/doctor'),
     salesRepModel = require('../model/salesRep');
 
 exports.setup = function(app) {
-    app.get('/api/doctor', getDoctorList);
+    app.get('/api/doctor', getSalesRepDoctors);
+    app.post('/api/doctor/create', createSalesRepDoctors);
     app.put('/api/doctor/:id', updateDoctor);
     app.post('/api/salesRep/:id/doctor', insertDoctor);
     app.delete('/api/doctor/:id', deleteDoctor);
-}
-
-/**
- * GET /api/doctor
- */
-function getDoctorList(req, res, next) {
-    doctorModel.getDoctors({},function(err, doctors){
-        if(err)
-            return next(err);
-
-        res.send(doctors);
-    })
 }
 
 /**
@@ -75,4 +64,21 @@ function deleteDoctor(req, res, next){
 
         res.send(result);
     })
+}
+
+/**
+ * GET /api/doctor
+ */
+
+function getSalesRepDoctors(req, res, next){
+    res.send(req.session.user.doctors);
+}
+
+/**
+ * POST /api/doctor/create
+ */
+
+function createSalesRepDoctors(req, res, next){
+    console.log(req.body);
+    res.send(req.body);
 }

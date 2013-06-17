@@ -7,6 +7,7 @@ exports.setup = function(app) {
     app.get('/main',main);
     app.get('/bricks', brickSales)
     app.get('/trends', salesTrends)
+    app.get('/doctor', doctor)
     app.get('/logout', logout)
     app.post('/login', authenticate);
     app.post('/loginWeb', authenticateWeb);
@@ -23,6 +24,7 @@ function authenticate(req, res, next){
 
             salesRepModel.getSalesRep(user._id.toString(),function(err, salesRep){
                 salesRepModel.incorporateSalesData(salesRep,function(newSalesRep){
+                    req.session.user = newSalesRep;
                     return res.send(newSalesRep);
                 })
             })
@@ -66,7 +68,11 @@ function brickSales(req, res, next){
 }
 
 function salesTrends(req, res, next){
-    res.render('trends',{user:JSON.stringify(req.session.user ? req.session.user : {})});
+    res.render('trends',{sales:JSON.stringify({})});
+}
+
+function doctor(req, res, next){
+    res.render('doctor');
 }
 
 function logout(req,res,next){

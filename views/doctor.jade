@@ -1,0 +1,57 @@
+extends layout
+
+block append head
+  script(type='text/javascript', src='scripts/external/kendo/kendo.web.min.js')
+  link(href='styles/external/kendo/kendo.common.min.css', rel='stylesheet', media='screen')
+  link(href='styles/external/kendo/kendo.default.min.css', rel='stylesheet', media='screen')
+
+block body
+  #example.k-content
+  #grid
+
+  script
+    $(document).ready(function () {
+                        var crudServiceBaseUrl = "http://localhost:3000",
+                            dataSource = new kendo.data.DataSource({
+                                dataType: "json",
+                                transport: {
+                                    read:  {
+                                        url: crudServiceBaseUrl + "/api/doctor"
+                                    },
+                                    create: {
+                                         url: crudServiceBaseUrl + "/api/doctor/create",
+                                         type: "POST",
+                                         dataType: "json"
+                                    }
+                                },
+                                pageSize: 20,
+                                schema: {
+                                    model: {
+                                        id: "_id",
+                                        fields: {
+                                            _id: { editable: false, nullable: false },
+                                            name: { type:"string", validation: { required: true } },
+                                            address: { type:"string", validation: { required: true } },
+                                            email: { type:"string", validation: { required: false } },
+                                            phone: { type:"string", validation: { required: true } },
+                                            speciality: { type:"string", validation: { required: false } }
+                                        }
+                                    }
+                                }
+                            });
+
+                        $("#grid").kendoGrid({
+                            dataSource: dataSource,
+                            pageable: true,
+                            height: 430,
+                            toolbar: ["create"],
+                            columns: [
+                                { field:"name", title: "Doctor Name" },
+                                { field: "address", title:"Address", width: "260px" },
+                                { field: "email", title:"Email", width: "160px" },
+                                { field: "phone", width: "100px" },
+                                { field: "speciality", width: "160px" },
+                                { command: ["edit", "destroy"], title: " ", width: "160px" }],
+                            editable: "inline"
+                        });
+                    });

@@ -1,17 +1,10 @@
 html
 head
     title Sales Monitor
-    meta(http-equiv='cache-control', content='no-cache', charset='UTF-8')
     script(src='scripts/external/jquery-latest.min.js')
     script(src='scripts/external/bootstrap.min.js')
-    script(type='text/javascript', src='scripts/external/numeral.min.js')
-    script(type='text/javascript', src='scripts/external/highcharts/highcharts.js')
-    script(type='text/javascript', src='scripts/external/highcharts/exporting.js')
-    script(type='text/javascript', src='scripts/external/highcharts/themes/gray.js')
-    script(type='text/javascript', src='scripts/external/bootstrap-datepicker.js')
-    script(type='text/javascript', src='scripts/custom/master.js')
+    block head
     link(href='styles/external/bootstrap.css', rel='stylesheet', media='screen')
-    link(href='styles/external/datepicker.css', rel='stylesheet', media='screen')
     link(href='styles/internal/style.css', rel='stylesheet', media='screen')
 
   body
@@ -39,6 +32,11 @@ head
                   a(href='/trends')
                     i.icon-signal.icon-white
                     | Sales Trends
+                li.divider-vertical
+                li
+                  a(href='/doctor')
+                    i.icon-signal.icon-white
+                    | Doctor Management
                 li.divider-vertical
               .btn-group.pull-right
                 a.btn.dropdown-toggle(data-toggle='dropdown', href='#')

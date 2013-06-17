@@ -1,5 +1,11 @@
 extends layout
 
+block append head
+  script(src='scripts/external/numeral.min.js')
+  script(src='scripts/external/highcharts/highcharts.js')
+  script(src='scripts/external/highcharts/exporting.js')
+  script(src='scripts/external/highcharts/themes/gray.js')
+
 block body
   div(style='height: 350px; width: 1100px; margin-left:5%;')
       #chartdiv(style='height: 300px;width: 540px; float: left;')
@@ -47,7 +53,12 @@ block body
                         <td>"+numeral((salesValue/budgetValue)).format('0.00%')+"</td> \
                         </tr>"
        }
-
+      var perShapeGradient = {
+                  x1: 0,
+                  y1: 0,
+                  x2: 1,
+                  y2: 0
+              };
       $('#chartdiv').highcharts({
                   chart: {
                       type: 'column'
@@ -78,6 +89,20 @@ block body
                           borderWidth: 0
                       }
                   },
+                  colors: [{
+                              linearGradient: perShapeGradient,
+                              stops: [
+                                 [0, 'rgb(136, 219, 5)'],
+                                 [1, 'rgb(112, 180, 5)']
+                                 ]
+                              }, {
+                              linearGradient: perShapeGradient,
+                              stops: [
+                                  [0, 'rgb(120, 202, 248)'],
+                                  [1, 'rgb(46, 150, 208)']
+                                  ]
+                              }
+                          ],
                   series: [{
                       name: 'Budget',
                       data: budget
@@ -113,6 +138,15 @@ block body
                       showInLegend: true
                   }
               },
+              colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
+                  return {
+                      radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                      stops: [
+                              [0, color],
+                              [1, Highcharts.Color(color).brighten(-0.3).get('rgb')]
+                      ]
+                  };
+              }),
               series: [{
                   type: 'pie',
                   name: 'Browser share',
