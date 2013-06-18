@@ -42,6 +42,12 @@ block body
             budgetUnits.push(sale.budgetUnits);
             achUnits.push(sale.salesUnit);
             }
+            var perShapeGradient = {
+                              x1: 0,
+                              y1: 0,
+                              x2: 1,
+                              y2: 0
+                          };
             $('#chartdiv').highcharts({
                               chart: {
                                   type: 'column'

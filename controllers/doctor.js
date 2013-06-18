@@ -8,6 +8,8 @@ var doctorModel = require('../model/doctor'),
 exports.setup = function(app) {
     app.get('/api/doctor', getSalesRepDoctors);
     app.post('/api/doctor/create', createSalesRepDoctors);
+    app.post('/api/doctor/update', updateSalesRepDoctor);
+    app.post('/api/doctor/delete', deleteSalesRepDoctor);
     app.put('/api/doctor/:id', updateDoctor);
     app.post('/api/salesRep/:id/doctor', insertDoctor);
     app.delete('/api/doctor/:id', deleteDoctor);
@@ -79,6 +81,51 @@ function getSalesRepDoctors(req, res, next){
  */
 
 function createSalesRepDoctors(req, res, next){
-    console.log(req.body);
-    res.send(req.body);
+    var data = req.body;
+    delete data._id;
+    doctorModel.addDoctor(data,function(err,doctor){
+        if(err)
+            return next(err);
+
+        salesRepModel.updateSalesRep(req.session.user._id,{$push:{doctors:doctor}},function(err,result){
+            if(err)
+                return next(err);
+
+            res.send(doctor);
+        })
+    })
+}
+
+/**
+ * POST /api/doctor/update
+ */
+
+function updateSalesRepDoctor(req, res, next){
+    var data = req.body;
+    delete data.__v;
+    var doctorId = data._id;
+    delete data._id;
+    doctorModel.updateDoctor(doctorId,{$set:data},function(err,doctor){
+        if(err)
+            return next(err);
+
+        res.send(doctor);
+    })
+}
+
+/**
+ * POST /api/doctor/delete
+ */
+
+function deleteSalesRepDoctor(req, res, next){
+    var data = req.body;
+    delete data.__v;
+    var doctorId = data._id;
+    delete data._id;
+    doctorModel.removeDoctor(doctorId,function(err,doctor){
+        if(err)
+            return next(err);
+
+        res.send(doctor);
+    })
 }
