@@ -50,7 +50,7 @@ block body
                           };
             $('#chartdiv').highcharts({
                               chart: {
-                                  type: 'column'
+                                  type: 'line'
                               },
                               title: {
                                   text: 'Budget Vs. Achievement - By Month - By Value'
@@ -59,23 +59,16 @@ block body
                                   categories: months
                               },
                               yAxis: {
-                                  min: 0,
                                   title: {
                                       text: 'Values'
                                   }
                               },
-                              tooltip: {
-                                  headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                                  pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                                      '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
-                                  footerFormat: '</table>',
-                                  shared: true,
-                                  useHTML: true
-                              },
                               plotOptions: {
-                                  column: {
-                                      pointPadding: 0.2,
-                                      borderWidth: 0
+                                  line: {
+                                     dataLabels: {
+                                        enabled: true
+                                     },
+                                     enableMouseTracking: false
                                   }
                               },
                               colors: [{
@@ -105,7 +98,7 @@ block body
 
              $('#unitsdiv').highcharts({
                                           chart: {
-                                              type: 'column'
+                                              type: 'line'
                                           },
                                           title: {
                                               text: 'Budget Vs. Achievement - By Month - By Units'
@@ -114,23 +107,16 @@ block body
                                               categories: months
                                           },
                                           yAxis: {
-                                              min: 0,
                                               title: {
                                                   text: 'Units'
                                               }
                                           },
-                                          tooltip: {
-                                              headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                                              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                                                  '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
-                                              footerFormat: '</table>',
-                                              shared: true,
-                                              useHTML: true
-                                          },
                                           plotOptions: {
-                                              column: {
-                                                  pointPadding: 0.2,
-                                                  borderWidth: 0
+                                              line: {
+                                                 dataLabels: {
+                                                    enabled: true
+                                                 },
+                                                 enableMouseTracking: false
                                               }
                                           },
                                           colors: [{

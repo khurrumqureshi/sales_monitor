@@ -108,22 +108,13 @@ block body
                                       }
                                   }
                               }
-                          },
-                          dataLabels: {
-                              enabled: true,
-                              style: {
-                                  fontWeight: 'bold'
-                              },
-                              formatter: function() {
-                                  return this.y;
-                              }
                           }
                       }
                   },
                   tooltip: {
                       formatter: function() {
                           var point = this.point,
-                              s = this.x +':<b>'+ this.y +'</b><br/>';
+                              s = this.x +':<b>'+ Highcharts.numberFormat(this.y, 0, ',') +'</b><br/>';
                           if (point.drilldown) {
                               s += 'Click to view '+ point.category +' products';
                           } else {
@@ -176,7 +167,7 @@ block body
                             }),
               series: [{
                   type: 'pie',
-                  name: 'Browser share',
+                  name: 'Share',
                   data: brickShare
               }]
       });
