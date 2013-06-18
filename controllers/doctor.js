@@ -73,7 +73,13 @@ function deleteDoctor(req, res, next){
  */
 
 function getSalesRepDoctors(req, res, next){
-    res.send(req.session.user.doctors);
+    salesRepModel.getSalesRep(req.session.user._id,function(err,salesRep){
+        if(err)
+        return next(err);
+
+        res.send(salesRep.doctors);
+    })
+
 }
 
 /**
