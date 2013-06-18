@@ -1,4 +1,4 @@
-extends layout
+extends layout-ipad
 
 block append head
   script(src='scripts/external/numeral.min.js')
@@ -9,9 +9,8 @@ block append head
 
 block body
   .container
-    div
-      #chartdiv(style='height: 325px;width: 525px; float: left;')
-      #piediv(style='height: 325px;width: 525px; float: right;')
+    #chartdiv
+    #piediv(style='margin-top: 3%;')
     .span5(style='margin-left:30%; margin-top: 3%;')
       table#brickSales.table.table-striped.table-condensed
           thead

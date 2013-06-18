@@ -14,6 +14,7 @@ exports.setup = function(app) {
     app.get('/api/salesRep/:id/salesTrend', getSalesTrend);
     app.post('/api/salesRep', insertSalesRep);
     app.post('/salesTrend', showSalesTrend);
+    app.post('/salesTrend-iPad', showSalesTrendIPad);
     app.put('/api/salesRep/:id/bricks', updateSalesRepBricks);
 }
 
@@ -136,9 +137,31 @@ function getSalesTrend(req, res, next){
  */
 
 function showSalesTrend(req, res, next){
-    salesRepModel.getBasicSalesRep(req.session.user._id,function(err, salesRep){
+    getSalesTrends(req,function(err,sales){
+        if(err)
+        return next(err);
+
+        res.render('trends',{sales:JSON.stringify(sales)});
+    })
+}
+
+/**
+ * POST /salesTrend-ipad
+ */
+
+function showSalesTrendIPad(req, res, next){
+    getSalesTrends(req,function(err,sales){
         if(err)
             return next(err);
+
+        res.render('trends-ipad',{sales:JSON.stringify(sales)});
+    })
+}
+
+function getSalesTrends(req,callback){
+    salesRepModel.getBasicSalesRep(req.session.user._id,function(err, salesRep){
+        if(err)
+            return callback(err,null);
 
         var matchQuery = { brickId: {$in: salesRep.bricks}, updatedDate:{$gte:(new Date(req.body.startDate)).getTime(),$lt:(new Date(req.body.endDate)).getTime()}};
         if(req.query.productId && req.query.productId.length>0)
@@ -146,7 +169,7 @@ function showSalesTrend(req, res, next){
 
         salesModel.getSalesTrends(matchQuery,function(err,sales){
             if(err)
-                return next(err);
+                return callback(err,null);
 
             async.forEach(sales,function(sale,cb){
                 var budgetMatchQuery = { month: sale.month , year:sale.year};
@@ -163,7 +186,7 @@ function showSalesTrend(req, res, next){
                     }
                 })
             },function(err){
-                res.render('trends',{sales:JSON.stringify(sales)});
+                callback(null,sales);
             })
         })
     })

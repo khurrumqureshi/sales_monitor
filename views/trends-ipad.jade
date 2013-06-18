@@ -1,4 +1,4 @@
-extends layout
+extends layout-ipad
 
 block append head
   script(src='scripts/external/numeral.min.js')
@@ -13,13 +13,13 @@ block body
     .row
       .span4.offset4.well
         h4 Choose Filter
-        form#login(method='POST', action='/salesTrend', accept-charset='UTF-8')
+        form#login(method='POST', action='/salesTrend-iPad', accept-charset='UTF-8')
           input#dp2.span4(type='text', name='startDate', placeholder='Start Date', data-date-format='mm/dd/yy')
           input#dp3.span4(type='text', name='endDate', placeholder='End Date', data-date-format='mm/dd/yy')
           button.btn.btn-info.btn-block(onclick='') Show
-    div
-      #chartdiv(style='height: 325px;width: 525px; float: left;')
-      #unitsdiv(style='height: 325px;width: 525px; float: right;')
+
+    #chartdiv
+    #unitsdiv(style='margin-top: 3%;')
 
 
   script

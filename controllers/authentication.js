@@ -5,8 +5,11 @@ var passport = require('passport'),
 exports.setup = function(app) {
     app.get('/',title);
     app.get('/main',main);
+    app.get('/main-ipad',mainIPad);
     app.get('/bricks', brickSales)
+    app.get('/bricks-ipad', brickSalesIPad)
     app.get('/trends', salesTrends)
+    app.get('/trends-ipad', salesTrendsIPad)
     app.get('/doctor', doctor)
     app.get('/logout', logout)
     app.post('/login', authenticate);
@@ -63,12 +66,24 @@ function main(req, res, next){
     res.render('main',{user:JSON.stringify(req.session.user ? req.session.user : {})});
 }
 
+function mainIPad(req, res, next){
+    res.render('main-ipad',{user:JSON.stringify(req.session.user ? req.session.user : {})});
+}
+
 function brickSales(req, res, next){
     res.render('bricks',{user:JSON.stringify(req.session.user ? req.session.user : {})});
 }
 
+function brickSalesIPad(req, res, next){
+    res.render('bricks-ipad',{user:JSON.stringify(req.session.user ? req.session.user : {})});
+}
+
 function salesTrends(req, res, next){
     res.render('trends',{sales:JSON.stringify({})});
+}
+
+function salesTrendsIPad(req, res, next){
+    res.render('trends-ipad',{sales:JSON.stringify({})});
 }
 
 function doctor(req, res, next){
