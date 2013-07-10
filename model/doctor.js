@@ -11,7 +11,8 @@ var doctor = new Schema({
     address: String,
     phone: Number,
     email: String,
-    speciality: String
+    speciality: String,
+    image: String
     //chemists: [{type:Schema.Types.ObjectId, ref:'Chemists'}]
 });
 
