@@ -117,8 +117,8 @@ function getSalesTrend(req, res, next){
                         else{
                             sale["budgetUnits"] = budget.budgetUnits;
                             sale["budgetValue"] = budget.budgetValue;
-                            sale["month"] = utils.getMonthName(sale.month);
                             sale["monthNumber"] = sale.month;
+                            sale["month"] = utils.getMonthName(sale.month);
                             cb();
                         }
                     })
